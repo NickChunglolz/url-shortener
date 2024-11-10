@@ -2,6 +2,7 @@
 
 ## Overview
 The URL shortener is a helper for shortening the long URL from the user's input.
+![ui](./asset/ui.png)
 
 ## Requirements
 ### Functional Requirements
