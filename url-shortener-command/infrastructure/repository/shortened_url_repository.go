@@ -8,12 +8,11 @@ import (
 )
 
 type ShortenedUrlDao struct {
-	tableName   struct{}  `pg:"shortened_url"`
-	Code        string    `pg:"code,pk"`
-	LongUrl     string    `pg:"long_url"`
-	CreatedTime time.Time `pg:"created_time"`
+    tableName   struct{}  `pg:"shortened_url,alias:shortened_url"`
+    Code        string    `pg:"code,pk"`
+    LongUrl     string    `pg:"long_url,notnull"`
+    CreatedTime time.Time `pg:"created_time,notnull,default:current_timestamp"`
 }
-
 type ShortenedUrlRepositoryImpl struct {
 	db *pg.DB
 }

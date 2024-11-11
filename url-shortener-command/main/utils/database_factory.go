@@ -35,6 +35,7 @@ func (df *DatabaseFactoryImpl) CreateDb() (*pg.DB, error) {
 
 	dbClient = pg.Connect(&pg.Options{
 		Addr:     fmt.Sprintf("%s:%s", "0.0.0.0", "5432"),
+		Database: "db",
 		User:     "postgres",
 		Password: "postgres",
 	})

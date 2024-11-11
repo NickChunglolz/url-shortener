@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-const rootPath = "/url-shortener-command/Urls"
+const rootPath = "/Urls"
 
 type Controller struct {
 	command *usecase.ShortenedUrlCommand
@@ -17,7 +17,7 @@ func NewController(command *usecase.ShortenedUrlCommand) *Controller {
 	}
 }
 
-func (controller *Controller) setRoutes(app *fiber.App) {
+func (controller *Controller) SetRoutes(app *fiber.App) {
 	app.Post(rootPath, func(c fiber.Ctx) error {
 		var request usecase.CreateShortenUrlRequest
 		if err := c.Bind().JSON(&request); err != nil {

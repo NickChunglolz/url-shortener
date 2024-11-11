@@ -18,12 +18,15 @@ type CreateShortenUrlResponse struct {
 }
 
 type ShortenedUrlCommand struct {
-	urlRepository     domain.UrlRepository
+	urlRepository     domain.ShortenedUrlRepository
 	counterRepository domain.CounterRepository
 }
 
-func NewShortenedUrlCommand() *ShortenedUrlCommand {
-	return &ShortenedUrlCommand{}
+func NewShortenedUrlCommand(urlRepository domain.ShortenedUrlRepository, counterRepository domain.CounterRepository) *ShortenedUrlCommand {
+	return &ShortenedUrlCommand{
+		urlRepository: urlRepository,
+		counterRepository: counterRepository,
+	}
 }
 
 func (command *ShortenedUrlCommand) CreateShortenUrl(request *CreateShortenUrlRequest) (*CreateShortenUrlResponse, error) {
@@ -31,7 +34,6 @@ func (command *ShortenedUrlCommand) CreateShortenUrl(request *CreateShortenUrlRe
 		return nil, fmt.Errorf("original URL cannot be empty")
 	}
 
-	// Get next counter value
 	counter, err := command.counterRepository.GetNextCounter()
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate counter: %w", err)

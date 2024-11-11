@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type UrlRepository interface {
+type ShortenedUrlRepository interface {
 	GetShortenUrlByCode(code string) (*ShortenedUrl, error)
 	CreateShortenedUrl(url *ShortenedUrl) error
 	DeleteShortenedUrl(code string) error
