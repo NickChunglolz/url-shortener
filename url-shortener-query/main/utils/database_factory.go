@@ -3,7 +3,6 @@ package utils
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/redis/go-redis/v9"
@@ -37,7 +36,8 @@ func NewDatabaseFactory() *DatabaseFactory {
 
 func (df *DatabaseFactory) CreateDb() (*pg.DB, error) {
 	dbClient = pg.Connect(&pg.Options{
-		Addr:     fmt.Sprintf("%s:%s", os.Getenv(DB_HOST), os.Getenv(DB_PORT)),
+		Addr:     fmt.Sprintf("%s:%s", "0.0.0.0", "5432"),
+		Database: "db",
 		User:     "postgres",
 		Password: "postgres",
 	})
@@ -52,7 +52,7 @@ func (df *DatabaseFactory) CreateDb() (*pg.DB, error) {
 
 func (df *DatabaseFactory) CreateCacheDb() (*redis.Client, error) {
 	cacheDbClient = redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", os.Getenv(CACHE_DB_HOST), os.Getenv(CACHE_DB_PORT)),
+		Addr: fmt.Sprintf("%s:%s", "0.0.0.0", "6379"),
 	})
 
 	if err := cacheDbClient.Ping(context.Background()).Err(); err != nil {

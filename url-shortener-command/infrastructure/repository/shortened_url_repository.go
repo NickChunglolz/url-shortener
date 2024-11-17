@@ -13,6 +13,7 @@ type ShortenedUrlDao struct {
     LongUrl     string    `pg:"long_url,notnull"`
     CreatedTime time.Time `pg:"created_time,notnull,default:current_timestamp"`
 }
+
 type ShortenedUrlRepositoryImpl struct {
 	db *pg.DB
 }
@@ -23,10 +24,10 @@ func NewShortenedUrlRepositoryImpl(db *pg.DB) *ShortenedUrlRepositoryImpl {
 	}
 }
 
-func (impl *ShortenedUrlRepositoryImpl) GetShortenUrlByCode(code string) (*domain.ShortenedUrl, error) {
+func (impl *ShortenedUrlRepositoryImpl) GetShortenUrlById(id *domain.ShortenedUrlId) (*domain.ShortenedUrl, error) {
 	dao := &ShortenedUrlDao{}
 	err := impl.db.Model(dao).
-		Where("code = ?", code).
+		Where("code = ?", id.GetShortCode()).
 		Select()
 
 	if err != nil {
@@ -36,12 +37,7 @@ func (impl *ShortenedUrlRepositoryImpl) GetShortenUrlByCode(code string) (*domai
 		return nil, err
 	}
 
-	id, err := domain.ReconstituteShortenedUrlId(code)
-	if err != nil {
-		return nil, err
-	}
-
-	return domain.NewShortenedUrl(id, dao.LongUrl)
+	return domain.ReconstituteShortenedUrl(dao.Code, dao.LongUrl, dao.CreatedTime)
 }
 
 func (impl *ShortenedUrlRepositoryImpl) CreateShortenedUrl(url *domain.ShortenedUrl) error {

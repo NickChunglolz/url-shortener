@@ -18,13 +18,13 @@ type CreateShortenUrlResponse struct {
 }
 
 type ShortenedUrlCommand struct {
-	urlRepository     domain.ShortenedUrlRepository
+	shortenedUrlRepository     domain.ShortenedUrlRepository
 	counterRepository domain.CounterRepository
 }
 
-func NewShortenedUrlCommand(urlRepository domain.ShortenedUrlRepository, counterRepository domain.CounterRepository) *ShortenedUrlCommand {
+func NewShortenedUrlCommand(shortenedUrlRepository domain.ShortenedUrlRepository, counterRepository domain.CounterRepository) *ShortenedUrlCommand {
 	return &ShortenedUrlCommand{
-		urlRepository: urlRepository,
+		shortenedUrlRepository: shortenedUrlRepository,
 		counterRepository: counterRepository,
 	}
 }
@@ -39,22 +39,17 @@ func (command *ShortenedUrlCommand) CreateShortenUrl(request *CreateShortenUrlRe
 		return nil, fmt.Errorf("failed to generate counter: %w", err)
 	}
 
-	id, err := domain.NewShortenedUrlId(counter)
-	if err != nil {
+	shortenedUrl, err := domain.NewShortenedUrl(counter, request.OriginalURL)
+	if err != nil{
 		return nil, err
 	}
 
-	shortenedUrl, err := domain.NewShortenedUrl(id, request.OriginalURL)
-	if err != nil {
-		return nil, err
-	}
-
-	err = command.urlRepository.CreateShortenedUrl(shortenedUrl)
+	err = command.shortenedUrlRepository.CreateShortenedUrl(shortenedUrl)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create shortened URL: %w", err)
 	}
 
-	shortenedUrl, err = command.urlRepository.GetShortenUrlByCode(id.GetShortCode())
+	shortenedUrl, err = command.shortenedUrlRepository.GetShortenUrlById(shortenedUrl.GetId())
 	if err != nil {
 		return nil, err
 	}
