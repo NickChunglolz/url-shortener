@@ -10,3 +10,16 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
+
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+    # command: ["--requirepass", "passw0rd"]
+
+volumes:
+  redis_data:
+    driver: local

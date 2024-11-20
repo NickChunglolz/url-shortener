@@ -59,7 +59,7 @@ func (df *DatabaseFactory) CreateCacheDb() (*redis.Client, error) {
 		return nil, err
 	}
 
-	fmt.Println("Cache database connecion created successfully:", dbClient)
+	fmt.Println("Cache database connecion created successfully:", cacheDbClient)
 	return cacheDbClient, nil
 }
 

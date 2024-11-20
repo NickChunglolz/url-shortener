@@ -29,10 +29,18 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const response = await fetch("https://api.shrtco.de/v2/shorten?url=" + encodeURIComponent(url));
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          originalUrl: url
+        })
+      };
+      const response = await fetch("http://127.0.0.1:8082/Urls", requestOptions);
       const data = await response.json();
-      if (data.ok) {
-        setShortUrl(data.result.full_short_link);
+      console.log(data);
+      if (data && data.shortCode) {
+        setShortUrl(`http://127.0.0.1:8081/${data.shortCode}`);
         toast.success("URL shortened successfully!");
       } else {
         toast.error("Failed to shorten URL");
