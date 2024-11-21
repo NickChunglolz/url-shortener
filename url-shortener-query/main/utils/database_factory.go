@@ -8,13 +8,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-const (
-	DB_HOST       = "DB_HOST"
-	DB_PORT       = "DB_PORT"
-	CACHE_DB_HOST = "CACHE_DB_HOST"
-	CACHE_DB_PORT = "CACHE_DB_PORT"
-)
-
 var (
 	dbClient      *pg.DB
 	cacheDbClient *redis.Client
@@ -28,18 +21,22 @@ type DatabaseFactoryInterface interface {
 	CloseDatabaseConnections()
 }
 
-type DatabaseFactory struct{}
+type DatabaseFactory struct{
+	config *Config
+}
 
-func NewDatabaseFactory() *DatabaseFactory {
-	return &DatabaseFactory{}
+func NewDatabaseFactory(config *Config) *DatabaseFactory {
+	return &DatabaseFactory{
+		config: config,
+	}
 }
 
 func (df *DatabaseFactory) CreateDb() (*pg.DB, error) {
 	dbClient = pg.Connect(&pg.Options{
-		Addr:     fmt.Sprintf("%s:%s", "0.0.0.0", "5432"),
-		Database: "db",
-		User:     "postgres",
-		Password: "postgres",
+		Addr:     fmt.Sprintf("%s:%s", df.config.Downstream.Db.Host, df.config.Downstream.Db.Port),
+		Database: df.config.Downstream.Db.Database,
+		User:     df.config.Downstream.Db.User,
+		Password: df.config.Downstream.Db.Password,
 	})
 
 	if err := dbClient.Ping(dbClient.Context()); err != nil {
@@ -52,7 +49,7 @@ func (df *DatabaseFactory) CreateDb() (*pg.DB, error) {
 
 func (df *DatabaseFactory) CreateCacheDb() (*redis.Client, error) {
 	cacheDbClient = redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", "0.0.0.0", "6379"),
+		Addr: fmt.Sprintf("%s:%s", df.config.Downstream.CacheDB.Host, df.config.Downstream.CacheDB.Port),
 	})
 
 	if err := cacheDbClient.Ping(context.Background()).Err(); err != nil {

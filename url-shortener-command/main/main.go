@@ -13,16 +13,21 @@ import (
 )
 
 func main() {
+	config, err := utils.NewConfig().Load()
+	if err != nil {
+		fmt.Println("Load system config error:", err)
+	}
+
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{fmt.Sprintf("http://%s:%s", config.Upstream.Server.Host, config.Upstream.Server.Port)},
 		AllowMethods:     []string{"POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		AllowCredentials: false,
 	}))
 
-	var factory utils.DatabaseFactory = utils.NewDatabaseFactory()
+	var factory utils.DatabaseFactory = utils.NewDatabaseFactory(config)
 	defer factory.CloseDatabaseConnections()
 
 	db, err := factory.CreateDb()
@@ -36,5 +41,5 @@ func main() {
 	controller := adapter.NewController(shortenedUrlCommand)
 	controller.SetRoutes(app)
 
-	log.Fatal(app.Listen("localhost:8082"))
+	log.Fatal(app.Listen(fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)))
 }

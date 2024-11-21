@@ -1,0 +1,23 @@
+upstream:
+  server:
+    host: localhost
+    port: 3000
+
+downstream:
+  db:
+    host: 0.0.0.0
+    port: 5432
+    database: db
+    user: postgres
+    password: postgres
+  cache_db:
+    host: 0.0.0.0
+    port: 6379
+
+server:
+  host: localhost
+  port: 8081
+
+cache:
+  key_prefix: "shortened_url:"
+  ttl: 2160

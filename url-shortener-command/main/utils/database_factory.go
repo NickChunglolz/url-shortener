@@ -7,13 +7,6 @@ import (
 	"github.com/go-pg/pg/v10"
 )
 
-const (
-	DB_HOST       = "DB_HOST"
-	DB_PORT       = "DB_PORT"
-	CACHE_DB_HOST = "CACHE_DB_HOST"
-	CACHE_DB_PORT = "CACHE_DB_PORT"
-)
-
 var (
 	dbClient *pg.DB
 )
@@ -24,20 +17,24 @@ type DatabaseFactory interface {
 	CloseDatabaseConnections()
 }
 
-type DatabaseFactoryImpl struct{}
+type DatabaseFactoryImpl struct{
+	config *Config
+}
 
-func NewDatabaseFactory() *DatabaseFactoryImpl {
-	return &DatabaseFactoryImpl{}
+func NewDatabaseFactory(config *Config) *DatabaseFactoryImpl {
+	return &DatabaseFactoryImpl{
+		config: config,
+	}
 }
 
 func (df *DatabaseFactoryImpl) CreateDb() (*pg.DB, error) {
 	var err string
 
 	dbClient = pg.Connect(&pg.Options{
-		Addr:     fmt.Sprintf("%s:%s", "0.0.0.0", "5432"),
-		Database: "db",
-		User:     "postgres",
-		Password: "postgres",
+		Addr:     fmt.Sprintf("%s:%s", df.config.Downstream.Db.Host, df.config.Downstream.Db.Port),
+		Database: df.config.Downstream.Db.Database,
+		User:     df.config.Downstream.Db.User,
+		Password: df.config.Downstream.Db.Password,
 	})
 
 	if len(err) > 0 {

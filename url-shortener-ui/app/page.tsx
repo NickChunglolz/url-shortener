@@ -6,6 +6,10 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Link2, Copy, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { config } from "@/config";
+
+const getCommandUrl = () => `http://${config.downstream.server.command.host}:${config.downstream.server.command.port}`;
+const getQueryUrl = () => `http://${config.downstream.server.query.host}:${config.downstream.server.query.port}`;
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -36,11 +40,11 @@ export default function Home() {
           originalUrl: url
         })
       };
-      const response = await fetch("http://127.0.0.1:8082/Urls", requestOptions);
+      const response = await fetch(`${getCommandUrl()}/Urls`, requestOptions);
       const data = await response.json();
       console.log(data);
       if (data && data.shortCode) {
-        setShortUrl(`http://127.0.0.1:8081/${data.shortCode}`);
+        setShortUrl(`${getQueryUrl()}/${data.shortCode}`);
         toast.success("URL shortened successfully!");
       } else {
         toast.error("Failed to shorten URL");

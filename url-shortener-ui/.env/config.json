@@ -1,0 +1,14 @@
+{
+    "downstream": {
+       "server": {
+            "query": {
+                "host": "localhost",
+                "port": 8081
+            },
+            "command": {
+                "host": "localhost",
+                "port": 8082
+            }
+       }
+    }
+}
